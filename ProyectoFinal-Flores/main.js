@@ -42,7 +42,8 @@ main.innerHTML=`<div id="carouselExampleRide" class="carousel slide" data-bs-rid
 <br>
 <div class="d-grid gap-2 col-6 mx-auto">
         <button id="agregar" class="btn btn-primary" type="button">Agregar Producto</button>
-        <button id="filtrar" class="btn btn-light" type="button">Filtrar Producto</button>
+        <button id="filtrar" class="btn btn-secondary" type="button">Buscar Producto</button>
+        <button id="contacto" class="btn btn-outline-primary" type="button">Contacto</button>
     </div>
 `
 document.body.appendChild(main)
@@ -141,11 +142,53 @@ function agregarProducto(){
     })
 }
 
+function Contacto(){
+  Swal.fire({
+    title:`Dejanos tu Datos`,
+    html:`<label>Nombre:</label> <input id="nombre1-input" class="swal2-input" type="text" autofocus>
+            <label>Correo Electrónico:</label><input id="correo-input" class="swal2-input" type="email" step="0.01">`,
+        showCancelButton: true,
+        confirmButtonText:"Agregar",
+        cancelButtonText: "Cancelar",
+  }).then((result)=>{
+    if(result.isConfirmed){
+      const nombre = document.getElementById('nombre1-input').value;
+      const email = document.getElementById('correo-input').value;
+      if (nombre && email){
+        Swal.fire({
+            icon: 'success',
+            title: '¡Gracias por contactarnos!',
+            text: `Tu mensaje fue enviado correctamente, ${nombre}. Nos pondremos en contacto contigo pronto.`,
+        }).then(() => {
+            document.getElementById('contactForm').reset();
+        });
+        }else{
+        Swal.fire({
+            icon: 'error',
+            title: '¡Oops!',
+            text: 'Por favor, completa todos los campos.',
+        });
+        }
+    }
+  })
+
+
+
+
+
+
+
+
+}
+
 let agregar = document.getElementById("agregar")
 agregar.addEventListener("click",agregarProducto)
 
 let filtrar = document.getElementById("filtrar")
 filtrar.addEventListener("click",filtrarProducto)
+
+let contacto = document.getElementById("contacto")
+contacto.addEventListener("click",Contacto)
 
 let URL= `https://api.metalpriceapi.com/v1/symbols?api_key=6e7b1a552ff611b09faf316971d7586b`
 
@@ -153,23 +196,16 @@ const monedasContainer = document.createElement("section");
 document.body.appendChild(monedasContainer)
 
 fetch(URL)
-.then(response => response.json())
-.then(data => {
-  const monedas = data.results;
+.then((response) => response.json())
+.then((data) => {
+  const monedas = data.symbols;
 
-  monedas.forEach((moneda) => {
-    fetch(moneda.url)
-    .then(response => response.json())
-    .then(monedaData => {
+  for (const clave in monedas) {
       const monedaElement = document.createElement(`div`);
-      monedaElement.innerHTML = `<h2>${monedaData.symbols}`;
+      monedaElement.innerHTML = `<h6>Estas son las monedas con las que trabajamos actualmente<h1/>${clave}:${monedas[clave]}`;
       monedasContainer.appendChild(monedaElement);
+      }
     })
-    .catch(error =>{
+    .catch((error) =>{
       console.error(`Ha ocurrido un error`, error);
     });
-  });
-})
-.catch(error => {
-  console.error(`Ha ocurrido un error`);
-});
