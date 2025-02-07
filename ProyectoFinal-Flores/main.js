@@ -200,12 +200,21 @@ fetch(URL)
 .then((data) => {
   const monedas = data.symbols;
 
-  for (const clave in monedas) {
-      const monedaElement = document.createElement(`div`);
-      monedaElement.innerHTML = `<h6>Estas son las monedas con las que trabajamos actualmente<h1/>${clave}:${monedas[clave]}`;
-      monedasContainer.appendChild(monedaElement);
-      }
-    })
-    .catch((error) =>{
-      console.error(`Ha ocurrido un error`, error);
-    });
+  const lista = document.createElement ("ul")
+  lista.innerHTML = `<br>
+  <h2>Lista de Monedas Aceptadas<h2/>`
+  ;
+
+  Object.entries (monedas)
+  .slice (0,10)
+  .forEach(([codigo, nombre]) => {
+    const item = document.createElement("li");
+    item.textContent = `${codigo}: ${nombre}`;
+    lista.appendChild(item);
+  })
+
+  document.body.appendChild(lista);
+})
+.catch((error) => {
+  console.error(`Ha ocurrido un error`);
+})
